@@ -28,6 +28,7 @@ import org.apache.flume.Channel;
 import org.apache.flume.Context;
 import org.apache.flume.Event;
 import org.apache.flume.EventDeliveryException;
+import org.apache.flume.event.EventHelper;
 import org.apache.flume.Transaction;
 import org.apache.flume.conf.Configurable;
 import org.apache.flume.conf.ConfigurationException;
@@ -53,22 +54,22 @@ import java.util.Map;
 import java.util.Properties;
 import java.util.concurrent.Future;
 
-import static org.apache.flume.sink.kafka.KafkaSinkConstants.BOOTSTRAP_SERVERS_CONFIG;
-import static org.apache.flume.sink.kafka.KafkaSinkConstants.BATCH_SIZE;
-import static org.apache.flume.sink.kafka.KafkaSinkConstants.DEFAULT_BATCH_SIZE;
-import static org.apache.flume.sink.kafka.KafkaSinkConstants.BROKER_LIST_FLUME_KEY;
-import static org.apache.flume.sink.kafka.KafkaSinkConstants.DEFAULT_ACKS;
-import static org.apache.flume.sink.kafka.KafkaSinkConstants.DEFAULT_KEY_SERIALIZER;
-import static org.apache.flume.sink.kafka.KafkaSinkConstants.DEFAULT_TOPIC;
-import static org.apache.flume.sink.kafka.KafkaSinkConstants.DEFAULT_VALUE_SERIAIZER;
-import static org.apache.flume.sink.kafka.KafkaSinkConstants.KAFKA_PRODUCER_PREFIX;
-import static org.apache.flume.sink.kafka.KafkaSinkConstants.KEY_HEADER;
-import static org.apache.flume.sink.kafka.KafkaSinkConstants.OLD_BATCH_SIZE;
-import static org.apache.flume.sink.kafka.KafkaSinkConstants.REQUIRED_ACKS_FLUME_KEY;
-import static org.apache.flume.sink.kafka.KafkaSinkConstants.TOPIC_CONFIG;
-import static org.apache.flume.sink.kafka.KafkaSinkConstants.TOPIC_HEADER;
-import static org.apache.flume.sink.kafka.KafkaSinkConstants.KEY_SERIALIZER_KEY;
-import static org.apache.flume.sink.kafka.KafkaSinkConstants.MESSAGE_SERIALIZER_KEY;
+import static org.apache.flume.sink.kafka.KafkaCustomSinkConstants.BOOTSTRAP_SERVERS_CONFIG;
+import static org.apache.flume.sink.kafka.KafkaCustomSinkConstants.BATCH_SIZE;
+import static org.apache.flume.sink.kafka.KafkaCustomSinkConstants.DEFAULT_BATCH_SIZE;
+import static org.apache.flume.sink.kafka.KafkaCustomSinkConstants.BROKER_LIST_FLUME_KEY;
+import static org.apache.flume.sink.kafka.KafkaCustomSinkConstants.DEFAULT_ACKS;
+import static org.apache.flume.sink.kafka.KafkaCustomSinkConstants.DEFAULT_KEY_SERIALIZER;
+import static org.apache.flume.sink.kafka.KafkaCustomSinkConstants.DEFAULT_TOPIC;
+import static org.apache.flume.sink.kafka.KafkaCustomSinkConstants.DEFAULT_VALUE_SERIAIZER;
+import static org.apache.flume.sink.kafka.KafkaCustomSinkConstants.KAFKA_PRODUCER_PREFIX;
+import static org.apache.flume.sink.kafka.KafkaCustomSinkConstants.KEY_HEADER;
+import static org.apache.flume.sink.kafka.KafkaCustomSinkConstants.OLD_BATCH_SIZE;
+import static org.apache.flume.sink.kafka.KafkaCustomSinkConstants.REQUIRED_ACKS_FLUME_KEY;
+import static org.apache.flume.sink.kafka.KafkaCustomSinkConstants.TOPIC_CONFIG;
+import static org.apache.flume.sink.kafka.KafkaCustomSinkConstants.TOPIC_HEADER;
+import static org.apache.flume.sink.kafka.KafkaCustomSinkConstants.KEY_SERIALIZER_KEY;
+import static org.apache.flume.sink.kafka.KafkaCustomSinkConstants.MESSAGE_SERIALIZER_KEY;
 
 
 /**
@@ -102,9 +103,9 @@ import static org.apache.flume.sink.kafka.KafkaSinkConstants.MESSAGE_SERIALIZER_
  * topic
  * key
  */
-public class KafkaSink extends AbstractSink implements Configurable {
+public class KafkaCustomSink extends AbstractSink implements Configurable {
 
-  private static final Logger logger = LoggerFactory.getLogger(KafkaSink.class);
+  private static final Logger logger = LoggerFactory.getLogger(KafkaCustomSink.class);
 
   private final Properties kafkaProps = new Properties();
   private KafkaProducer<String, byte[]> producer;
@@ -122,6 +123,8 @@ public class KafkaSink extends AbstractSink implements Configurable {
           Optional.absent();
   private Optional<ByteArrayOutputStream> tempOutStream = Optional
           .absent();
+
+  private int maxBytesToLog = DEFAULT_MAX_BYTE_DUMP;
 
   //Fine to use null for initial value, Avro will create new ones if this
   // is null
@@ -203,11 +206,17 @@ public class KafkaSink extends AbstractSink implements Configurable {
             }
           }
           if (partitionId != null) {
+            //record = new ProducerRecord<String, byte[]>(eventTopic, partitionId, eventKey,
+            //    serializeEvent(event, useAvroEventFormat));
             record = new ProducerRecord<String, byte[]>(eventTopic, partitionId, eventKey,
-                serializeEvent(event, useAvroEventFormat));
+                    EventHelper.dumpEvent(event, maxBytesToLog));
+
           } else {
+            //record = new ProducerRecord<String, byte[]>(eventTopic, eventKey,
+            //    serializeEvent(event, useAvroEventFormat));
             record = new ProducerRecord<String, byte[]>(eventTopic, eventKey,
-                serializeEvent(event, useAvroEventFormat));
+                    EventHelper.dumpEvent(event, maxBytesToLog));
+
           }
           kafkaFutures.add(producer.send(record, new SinkCallback(startTime)));
         } catch (NumberFormatException ex) {

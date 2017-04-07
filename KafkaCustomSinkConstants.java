@@ -20,7 +20,7 @@ package org.apache.flume.sink.kafka;
 
 import org.apache.kafka.clients.CommonClientConfigs;
 
-public class KafkaSinkConstants {
+public class KafkaCustomSinkConstants {
 
   public static final String KAFKA_PREFIX = "kafka.";
   public static final String KAFKA_PRODUCER_PREFIX = KAFKA_PREFIX + "producer.";
