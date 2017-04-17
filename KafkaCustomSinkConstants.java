@@ -50,6 +50,9 @@ public class KafkaCustomSinkConstants {
   public static final String DEFAULT_TOPIC = "default-flume-topic";
   public static final String DEFAULT_ACKS = "1";
 
+  public static final String SYSLOG2JSON = "syslog2json-converter";
+  public static final boolean DEFAULT_SYSLOG2JSON = false;
+
   /* Old Properties */
 
   /* Properties */

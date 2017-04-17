@@ -3,6 +3,7 @@
   <component name="ProjectModuleManager">
     <modules>
       <module fileurl="file://$PROJECT_DIR$/fl-kafka-sink-alt.iml" filepath="$PROJECT_DIR$/fl-kafka-sink-alt.iml" />
+      <module fileurl="file://$USER_HOME$/flume/flume.iml" filepath="$USER_HOME$/flume/flume.iml" />
     </modules>
   </component>
 </project>

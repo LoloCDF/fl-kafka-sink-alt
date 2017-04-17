@@ -70,7 +70,8 @@ import static org.apache.flume.sink.kafka.KafkaCustomSinkConstants.TOPIC_CONFIG;
 import static org.apache.flume.sink.kafka.KafkaCustomSinkConstants.TOPIC_HEADER;
 import static org.apache.flume.sink.kafka.KafkaCustomSinkConstants.KEY_SERIALIZER_KEY;
 import static org.apache.flume.sink.kafka.KafkaCustomSinkConstants.MESSAGE_SERIALIZER_KEY;
-
+import static org.apache.flume.sink.kafka.KafkaCustomSinkConstants.SYSLOG2JSON;
+import static org.apache.flume.sink.kafka.KafkaCustomSinkConstants.DEFAULT_SYSLOG2JSON;
 
 /**
  * A Flume Sink that can publish messages to Kafka.
@@ -98,6 +99,7 @@ import static org.apache.flume.sink.kafka.KafkaCustomSinkConstants.MESSAGE_SERIA
  * requiredAcks -- 0 (unsafe), 1 (accepted by at least one broker, default),
  * -1 (accepted by all brokers)
  * useFlumeEventFormat - preserves event headers when serializing onto Kafka
+ * syslog2json - convert any syslog message into a json format
  * <p/>
  * header properties (per event):
  * topic
@@ -124,7 +126,9 @@ public class KafkaCustomSink extends AbstractSink implements Configurable {
   private Optional<ByteArrayOutputStream> tempOutStream = Optional
           .absent();
 
-  private int maxBytesToLog = DEFAULT_MAX_BYTE_DUMP;
+  private int maxBytesToLog = 400;
+
+  private boolean useSyslog2Json = false;
 
   //Fine to use null for initial value, Avro will create new ones if this
   // is null
@@ -206,17 +210,21 @@ public class KafkaCustomSink extends AbstractSink implements Configurable {
             }
           }
           if (partitionId != null) {
-            //record = new ProducerRecord<String, byte[]>(eventTopic, partitionId, eventKey,
-            //    serializeEvent(event, useAvroEventFormat));
-            record = new ProducerRecord<String, byte[]>(eventTopic, partitionId, eventKey,
-                    EventHelper.dumpEvent(event, maxBytesToLog));
-
+            if (useSyslog2Json == false) {
+              record = new ProducerRecord<String, byte[]>(eventTopic, partitionId, eventKey,
+                      serializeEvent(event, useAvroEventFormat));
+            } else {
+              record = new ProducerRecord<String, byte[]>(eventTopic, partitionId, eventKey,
+                      EventHelper.dumpEvent(event, maxBytesToLog).getBytes());
+            }
           } else {
-            //record = new ProducerRecord<String, byte[]>(eventTopic, eventKey,
-            //    serializeEvent(event, useAvroEventFormat));
-            record = new ProducerRecord<String, byte[]>(eventTopic, eventKey,
-                    EventHelper.dumpEvent(event, maxBytesToLog));
-
+            if (useSyslog2Json == false) {
+              record = new ProducerRecord<String, byte[]>(eventTopic, eventKey,
+                      serializeEvent(event, useAvroEventFormat));
+            } else {
+              record = new ProducerRecord<String, byte[]>(eventTopic, eventKey,
+                      EventHelper.dumpEvent(event, maxBytesToLog).getBytes());
+            }
           }
           kafkaFutures.add(producer.send(record, new SinkCallback(startTime)));
         } catch (NumberFormatException ex) {
@@ -313,20 +321,23 @@ public class KafkaCustomSink extends AbstractSink implements Configurable {
 
     topic = topicStr;
 
+    useSyslog2Json = context.getBoolean(KafkaCustomSinkConstants.SYSLOG2JSON,
+                                        KafkaCustomSinkConstants.DEFAULT_SYSLOG2JSON);
+
     batchSize = context.getInteger(BATCH_SIZE, DEFAULT_BATCH_SIZE);
 
     if (logger.isDebugEnabled()) {
       logger.debug("Using batch size: {}", batchSize);
     }
 
-    useAvroEventFormat = context.getBoolean(KafkaSinkConstants.AVRO_EVENT,
-                                            KafkaSinkConstants.DEFAULT_AVRO_EVENT);
+    useAvroEventFormat = context.getBoolean(KafkaCustomSinkConstants.AVRO_EVENT,
+                                            KafkaCustomSinkConstants.DEFAULT_AVRO_EVENT);
 
-    partitionHeader = context.getString(KafkaSinkConstants.PARTITION_HEADER_NAME);
-    staticPartitionId = context.getInteger(KafkaSinkConstants.STATIC_PARTITION_CONF);
+    partitionHeader = context.getString(KafkaCustomSinkConstants.PARTITION_HEADER_NAME);
+    staticPartitionId = context.getInteger(KafkaCustomSinkConstants.STATIC_PARTITION_CONF);
 
     if (logger.isDebugEnabled()) {
-      logger.debug(KafkaSinkConstants.AVRO_EVENT + " set to: {}", useAvroEventFormat);
+      logger.debug(KafkaCustomSinkConstants.AVRO_EVENT + " set to: {}", useAvroEventFormat);
     }
 
     kafkaFutures = new LinkedList<Future<RecordMetadata>>();
@@ -379,7 +390,7 @@ public class KafkaCustomSink extends AbstractSink implements Configurable {
     // Acks
     if (!(ctx.containsKey(KAFKA_PRODUCER_PREFIX + ProducerConfig.ACKS_CONFIG))) {
       String requiredKey = ctx.getString(
-              KafkaSinkConstants.REQUIRED_ACKS_FLUME_KEY);
+              KafkaCustomSinkConstants.REQUIRED_ACKS_FLUME_KEY);
       if (!(requiredKey == null) && !(requiredKey.isEmpty())) {
         ctx.put(KAFKA_PRODUCER_PREFIX + ProducerConfig.ACKS_CONFIG, requiredKey);
         logger.warn("{} is deprecated. Please use the parameter {}", REQUIRED_ACKS_FLUME_KEY,
@@ -447,24 +458,4 @@ public class KafkaCustomSink extends AbstractSink implements Configurable {
 
 }
 
-class SinkCallback implements Callback {
-  private static final Logger logger = LoggerFactory.getLogger(SinkCallback.class);
-  private long startTime;
-
-  public SinkCallback(long startTime) {
-    this.startTime = startTime;
-  }
-
-  public void onCompletion(RecordMetadata metadata, Exception exception) {
-    if (exception != null) {
-      logger.debug("Error sending message to Kafka {} ", exception.getMessage());
-    }
-
-    if (logger.isDebugEnabled()) {
-      long eventElapsedTime = System.currentTimeMillis() - startTime;
-      logger.debug("Acked message partition:{} ofset:{}",  metadata.partition(), metadata.offset());
-      logger.debug("Elapsed time for send: {}", eventElapsedTime);
-    }
-  }
-}
 
