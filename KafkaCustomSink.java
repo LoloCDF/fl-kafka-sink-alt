@@ -324,6 +324,12 @@ public class KafkaCustomSink extends AbstractSink implements Configurable {
     useSyslog2Json = context.getBoolean(KafkaCustomSinkConstants.SYSLOG2JSON,
                                         KafkaCustomSinkConstants.DEFAULT_SYSLOG2JSON);
 
+    if (useSyslog2Json) {
+      logger.debug("Using the syslog to JSON converter.");
+    } else {
+      logger.debug("NOT using the syslog to JSON converter.");
+    }
+
     batchSize = context.getInteger(BATCH_SIZE, DEFAULT_BATCH_SIZE);
 
     if (logger.isDebugEnabled()) {
