@@ -1,0 +1,45 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project version="4">
+  <component name="Encoding">
+    <file url="file://$USER_HOME$/flume" charset="UTF-8" />
+    <file url="file://$USER_HOME$/flume/flume-checkstyle" charset="UTF-8" />
+    <file url="file://$USER_HOME$/flume/flume-ng-auth" charset="UTF-8" />
+    <file url="file://$USER_HOME$/flume/flume-ng-channels" charset="UTF-8" />
+    <file url="file://$USER_HOME$/flume/flume-ng-channels/flume-file-channel" charset="UTF-8" />
+    <file url="file://$USER_HOME$/flume/flume-ng-channels/flume-jdbc-channel" charset="UTF-8" />
+    <file url="file://$USER_HOME$/flume/flume-ng-channels/flume-kafka-channel" charset="UTF-8" />
+    <file url="file://$USER_HOME$/flume/flume-ng-channels/flume-spillable-memory-channel" charset="UTF-8" />
+    <file url="file://$USER_HOME$/flume/flume-ng-clients" charset="UTF-8" />
+    <file url="file://$USER_HOME$/flume/flume-ng-clients/flume-ng-log4jappender" charset="UTF-8" />
+    <file url="file://$USER_HOME$/flume/flume-ng-configuration" charset="UTF-8" />
+    <file url="file://$USER_HOME$/flume/flume-ng-core" charset="UTF-8" />
+    <file url="file://$USER_HOME$/flume/flume-ng-dist" charset="UTF-8" />
+    <file url="file://$USER_HOME$/flume/flume-ng-embedded-agent" charset="UTF-8" />
+    <file url="file://$USER_HOME$/flume/flume-ng-legacy-sources" charset="UTF-8" />
+    <file url="file://$USER_HOME$/flume/flume-ng-legacy-sources/flume-avro-source" charset="UTF-8" />
+    <file url="file://$USER_HOME$/flume/flume-ng-legacy-sources/flume-thrift-source" charset="UTF-8" />
+    <file url="file://$USER_HOME$/flume/flume-ng-node" charset="UTF-8" />
+    <file url="file://$USER_HOME$/flume/flume-ng-sdk" charset="UTF-8" />
+    <file url="file://$USER_HOME$/flume/flume-ng-sinks" charset="UTF-8" />
+    <file url="file://$USER_HOME$/flume/flume-ng-sinks/flume-dataset-sink" charset="UTF-8" />
+    <file url="file://$USER_HOME$/flume/flume-ng-sinks/flume-hdfs-sink" charset="UTF-8" />
+    <file url="file://$USER_HOME$/flume/flume-ng-sinks/flume-hive-sink" charset="UTF-8" />
+    <file url="file://$USER_HOME$/flume/flume-ng-sinks/flume-http-sink" charset="UTF-8" />
+    <file url="file://$USER_HOME$/flume/flume-ng-sinks/flume-irc-sink" charset="UTF-8" />
+    <file url="file://$USER_HOME$/flume/flume-ng-sinks/flume-ng-elasticsearch-sink" charset="UTF-8" />
+    <file url="file://$USER_HOME$/flume/flume-ng-sinks/flume-ng-hbase-sink" charset="UTF-8" />
+    <file url="file://$USER_HOME$/flume/flume-ng-sinks/flume-ng-kafka-sink" charset="UTF-8" />
+    <file url="file://$USER_HOME$/flume/flume-ng-sinks/flume-ng-kfk-syslog2json-sink" charset="UTF-8" />
+    <file url="file://$USER_HOME$/flume/flume-ng-sinks/flume-ng-morphline-solr-sink" charset="UTF-8" />
+    <file url="file://$USER_HOME$/flume/flume-ng-sources" charset="UTF-8" />
+    <file url="file://$USER_HOME$/flume/flume-ng-sources/flume-jms-source" charset="UTF-8" />
+    <file url="file://$USER_HOME$/flume/flume-ng-sources/flume-kafka-source" charset="UTF-8" />
+    <file url="file://$USER_HOME$/flume/flume-ng-sources/flume-scribe-source" charset="UTF-8" />
+    <file url="file://$USER_HOME$/flume/flume-ng-sources/flume-taildir-source" charset="UTF-8" />
+    <file url="file://$USER_HOME$/flume/flume-ng-sources/flume-twitter-source" charset="UTF-8" />
+    <file url="file://$USER_HOME$/flume/flume-ng-tests" charset="UTF-8" />
+    <file url="file://$USER_HOME$/flume/flume-shared" charset="UTF-8" />
+    <file url="file://$USER_HOME$/flume/flume-shared/flume-shared-kafka-test" charset="UTF-8" />
+    <file url="file://$USER_HOME$/flume/flume-tools" charset="UTF-8" />
+  </component>
+</project>
