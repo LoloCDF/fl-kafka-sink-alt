@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<checkstyle version="6.19">
+<file name="/home/usuario/flume/flume-ng-sinks/flume-ng-kfk-syslog2json-sink/src/main/java/org/apache/flume/sink/kfk-syslog2json/S2JKafkaSink.java">
+</file>
+<file name="/home/usuario/flume/flume-ng-sinks/flume-ng-kfk-syslog2json-sink/src/main/java/org/apache/flume/sink/kfk-syslog2json/S2JEventHelper.java">
+</file>
+<file name="/home/usuario/flume/flume-ng-sinks/flume-ng-kfk-syslog2json-sink/src/main/java/org/apache/flume/sink/kfk-syslog2json/S2JKafkaSinkConstants.java">
+</file>
+</checkstyle>
